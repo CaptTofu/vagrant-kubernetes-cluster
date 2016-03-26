@@ -1,0 +1,20 @@
+#!/bin/bash
+
+dirName=`pwd | sed 's/.*\///'`;
+if [ $dirName == "vagrant-kubernetes" ];
+then
+  cd ..;
+fi
+
+PYTHONUNBUFFERED=1 \
+ANSIBLE_HOST_KEY_CHECKING=false \
+ANSIBLE_FORCE_COLOR=true \
+ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ControlMaster=auto -o ControlPersist=60s' \
+ansible-playbook \
+  --user=vagrant \
+  --connection=ssh \
+  --timeout=30 \
+  --limit='all' \
+  -i ./vagrant-kubernetes/.vagrant/ansible-inventory \
+  $EXTRA_OPTS \
+  -v ./kube-cluster.yml $*

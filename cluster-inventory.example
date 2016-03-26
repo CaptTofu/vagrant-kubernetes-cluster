@@ -1,0 +1,76 @@
+# Vagrant Inventory File
+#
+# Purpose:
+#
+# Describes the virtual cluster that Vagrant needs to build and the Ansible
+# playbooks to configure the cluster.  See README file for more information if
+# you want to change the cluster configuration.
+#
+# Format:
+#
+# "#" defines a comment.
+#
+# "[group-name]" defines an Ansible group with the name "group-name".  The
+# group name remains in effect until the next group name is found.  "default"
+# is a special group name that defines default parameters for all groups.  The
+# default parameter can be changed by redefining it in a later group.  The
+# "default" group must not contain any IP addresses.
+#
+# ":box box-name" defines the name of the VirtualBox base OS image.
+#
+# ":memory 1024" defines the amount of memory per node in MB.
+#
+# ":cores 1" defines the number of CPU cores per node.
+#
+# ":format %02d" defines the number format used to generate node names.  The
+# node will be named as the group name followed by a number that uses the
+# format to form the number.  In this case, the format is say that all node
+# numbers should be 3 digits with leading zeros.
+#
+# ":use_vault <value>" defines whether to use the Ansible password vault is
+# used (<value> = "true") or whether sudo does not require a password on the
+# local host (<value> = "false").  See README for more information.
+#
+# ":multiple_registery_hosts <value>" defines whether the docker registry runs
+# on all mesos-master nodes (<value> = "true") or on a single mesos-master node
+# (<value> = "false").
+#
+# ":run_ansible_playbook <value>" defines whether to run the ansible playbook
+# after vagrant creates the group (<value> = "true") or not (<value> =
+# "false").
+#
+# ":mesos_stem <value>" defines where to update /etc/hosts and proxy
+# environment with vagrant (<value> = false) or ansible (<value> = "true").
+#
+# ":ip 192.168.xxx.xxx" defines the IP address of a node.  This is what creates
+# a node in the virtual cluster.  IP addresses can be reused in the cluster.
+# (This will run multple play books on the same node.)  When an IP address is
+# reused, the node name will be the first node to use the IP address in this
+# file and the memory and cores parameters will be the sum of all nodes that
+# share the IP address.
+#
+# ":provider <value>" Explicitly define the provider. Defaults to 'virtualbox'
+# 
+# ":flannel_interface <device>" specify the network device flannel will create its bridge
+# on.
+
+[default]
+:box ubuntu/vivid64
+# vmware
+# :box bento/ubuntu-15.04 
+:memory 1024
+:cores 1
+:format %03d
+:run_ansible_playbook false
+#:provider vmware_fusion
+#:flannel_interface eth1
+
+[kubernetes-master]
+:memory 1024 
+:ip 192.168.55.10
+
+[kubernetes-minion]
+:memory 2048
+:ip 192.168.55.11
+:ip 192.168.55.12
+:ip 192.168.55.13
